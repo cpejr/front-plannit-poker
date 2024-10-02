@@ -1,7 +1,22 @@
 import { useState, useEffect } from "react";
 import { Table, Card, CardUser, ManageButton } from "../../components";
-import { ContainerCards, LeftCards, RightCards, Link, Text, CodeLabel, TheTableContainer, LeftTable, TopTable, RightTable, BottomTable, NameLabel} from "./Styles";
-import { useParams } from 'react-router-dom';
+import {
+  ContainerCards,
+  LeftCards,
+  RightCards,
+  Link,
+  Text,
+  CodeLabel,
+  TheTableContainer,
+  LeftTable,
+  TopTable,
+  RightTable,
+  BottomTable,
+  NameLabel,
+  TaskInput,
+  ButtonTask,
+} from "./Styles";
+import { useParams } from "react-router-dom";
 import { useGetRoom, useShowVotes } from "../../hooks/querys/room";
 import { useVote } from "../../hooks/querys/user";
 import ErrorBox from "../../components/ErrorBox/ErrorBox";
@@ -17,14 +32,10 @@ export default function MainPage() {
   const [left, setLeft] = useState([]);
   const [right, setRight] = useState([]);
   const [top, setTop] = useState([]);
+  const [task, setTask] = useState("");
   const [bottom, setBottom] = useState([]);
 
-  const cardSuits = [
-    '\u{2660}', 
-    '\u{2665}', 
-    '\u{2666}', 
-    '\u{2663}'  
-  ];
+  const cardSuits = ["\u{2660}", "\u{2665}", "\u{2666}", "\u{2663}"];
 
   const [canShow, setCanShow] = useState(false);
   const [canShowText, setCanShowText] = useState("Show");
@@ -39,112 +50,112 @@ export default function MainPage() {
       console.log("Erro ao buscar a sala:", err);
       navigate("/");
     },
-    onSuccess: () => {
-    },
-    refetchInterval: 0, 
+    onSuccess: () => {},
+    refetchInterval: 0,
     staleTime: 0,
   });
+  const isCreator = getRoom?.users.some(
+    (user) => user._id === userID && user.type === true
+  );
+  const handleInputChange = (e) => {
+    setTask(e.target.value);
+  };
 
   const { mutate: vote } = useVote({
     onError: (err) => {
       console.log(err);
     },
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
   });
 
   const { mutate: showVotes } = useShowVotes({
     onError: (err) => {
       console.log(err);
     },
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
   });
   const [avarage, setAvarage] = useState(0);
   const [median, setMedian] = useState(0);
   const [mode, setMode] = useState(0);
 
   function calculateAverageVote() {
-    if(getRoom){
+    if (getRoom) {
       let totalVotes = 0;
       let count = 0;
-    
-      getRoom.users.forEach(user => {
+
+      getRoom.users.forEach((user) => {
         if (user.vote !== undefined && user.vote !== null && user.vote >= 0) {
           totalVotes += user.vote;
           count += 1;
         }
       });
       setAvarage((totalVotes / count).toFixed(2));
-  }
-  
+    }
   }
 
   function calculateModeVote() {
     if (getRoom) {
-        const votes = getRoom.users
-            .map(user => user.vote)
-            .filter(vote => vote !== undefined && vote !== null && vote >= 0); 
+      const votes = getRoom.users
+        .map((user) => user.vote)
+        .filter((vote) => vote !== undefined && vote !== null && vote >= 0);
 
-        if (votes.length === 0) {
-            setMode(null); 
-            return;
+      if (votes.length === 0) {
+        setMode(null);
+        return;
+      }
+
+      const frequency = {};
+      let maxFrequency = 0;
+      let mode = null;
+
+      votes.forEach((vote) => {
+        frequency[vote] = (frequency[vote] || 0) + 1;
+        if (frequency[vote] > maxFrequency) {
+          maxFrequency = frequency[vote];
+          mode = vote;
         }
+      });
 
-        const frequency = {};
-        let maxFrequency = 0;
-        let mode = null;
-
-        votes.forEach(vote => {
-            frequency[vote] = (frequency[vote] || 0) + 1;
-            if (frequency[vote] > maxFrequency) {
-                maxFrequency = frequency[vote];
-                mode = vote;
-            }
-        });
-
-        setMode(mode);
+      setMode(mode);
     }
-}
-
+  }
 
   function calculateMedianVote() {
     if (getRoom) {
-        const votes = getRoom.users
-            .map(user => user.vote)
-            .filter(vote => vote !== undefined && vote !== null && vote >= 0); 
+      const votes = getRoom.users
+        .map((user) => user.vote)
+        .filter((vote) => vote !== undefined && vote !== null && vote >= 0);
 
-        if (votes.length === 0) {
-            setMedian(0); 
-            return;
-        }
+      if (votes.length === 0) {
+        setMedian(0);
+        return;
+      }
 
-        votes.sort((a, b) => a - b);
+      votes.sort((a, b) => a - b);
 
-        const middle = Math.floor(votes.length / 2);
+      const middle = Math.floor(votes.length / 2);
 
-        if (votes.length % 2 !== 0) {
-            setMedian(votes[middle]);
-        } else {
-            setMedian((votes[middle - 1] + votes[middle]) / 2);
-        }
+      if (votes.length % 2 !== 0) {
+        setMedian(votes[middle]);
+      } else {
+        setMedian((votes[middle - 1] + votes[middle]) / 2);
+      }
     }
-}
-function generateFibonacci() {
-  const fibSequence = [0, 1, 2];
+  }
+  function generateFibonacci() {
+    const fibSequence = [0, 1, 2];
 
-  for (let i = 3; i < 12; i++) {
+    for (let i = 3; i < 9; i++) {
       const nextNumber = fibSequence[i - 1] + fibSequence[i - 2];
       fibSequence.push(nextNumber);
+    }
+    setFibonacci(fibSequence);
   }
-  
-  setFibonacci(fibSequence);
-}
 
-  function doVote(num){
-    vote({id: userID, body: {"vote": num}});
+  function doVote(num) {
+    vote({ id: userID, body: { vote: num } });
   }
-  
+
   useEffect(() => {
     setLeft(getRoom?.users.slice(0, 3));
     setTop(getRoom?.users.slice(3, 9));
@@ -157,11 +168,10 @@ function generateFibonacci() {
     if (isRoomError) {
       setErrorText("Impossível conectar à sala");
     }
-    
   }, [getRoom, isRoomLoading]);
 
   useEffect(() => {
-    if(!canShow){
+    if (!canShow) {
       doVote(-1);
       const numberCards = document.querySelectorAll(".number-card");
       numberCards.forEach((card) => {
@@ -172,101 +182,155 @@ function generateFibonacci() {
   }, [canShow]);
 
   useEffect(() => {
-    
     generateFibonacci();
   }, []);
 
   return (
     <>
-    <ErrorBox text={ errorText } modalDisplay={ errorText ? "flex" : "none" } closeModal={() => { setErrorText(null) ; navigate("/");}}></ErrorBox>
-    
-    {isRoomLoading ? (
-       <p>
-        Room Loading
-      </p>) : ( <>
-    <NameLabel>Sala: { getRoom?.name }</NameLabel>
-    <CodeLabel>Código: { code }</CodeLabel>
-    <LeftCards>
-      <Link href={"https://www.notion.so/notioncpe/Vote-consciente-PlanITpoker-51e9e707248e41938de22d8948afa4b5?pvs=4"}>Vote consciente</Link>
-      <Link href={"https://www.notion.so/notioncpe/b8bb7797d91e4530b25b96713fe3a9b9?v=691ba4967d4449c5ad907fdfa39a372d"}>Quadro Scrum</Link>
-    </LeftCards>
-    <RightCards>
-      {canShow ? (
-      <>
-        <Text>Média: { avarage }</Text>
-        <Text>Mediana: { median }</Text>
-        <Text>Moda: { mode }</Text>
-      </>
-      ) :(
-        <>
-        <Text>Média: - </Text>
-        <Text>Mediana: -</Text>
-        <Text>Moda: -</Text>
-      </>
-      ) }
-    </RightCards>
+      <ErrorBox
+        text={errorText}
+        modalDisplay={errorText ? "flex" : "none"}
+        closeModal={() => {
+          setErrorText(null);
+          navigate("/");
+        }}
+      ></ErrorBox>
 
-     
+      {isRoomLoading ? (
+        <p>Room Loading</p>
+      ) : (
+        <>
+          <NameLabel>Sala: {getRoom?.name}</NameLabel>
+          <CodeLabel>Código: {code}</CodeLabel>
+          <LeftCards>
+            <Link
+              href={
+                "https://www.notion.so/notioncpe/Vote-Consciente-dfb88593dd6b4a93ba145eb05a078ddf"
+              }
+              target="_blank"
+            >
+              Vote consciente
+            </Link>
+            <Link
+              href={
+                "https://www.notion.so/notioncpe/b8bb7797d91e4530b25b96713fe3a9b9?v=691ba4967d4449c5ad907fdfa39a372d"
+              }
+              target="_blank"
+            >
+              Quadro Scrum
+            </Link>
+            {isCreator && (
+              <>
+                <NameLabel>Nome da tarefa:</NameLabel>
+                <TaskInput
+                  type="text"
+                  value={task}
+                  onChange={handleInputChange}
+                />
+              </>
+            )}
+          </LeftCards>
+          <RightCards>
+            {canShow ? (
+              <>
+                <Text>Média: {avarage}</Text>
+                <Text>Mediana: {median}</Text>
+                <Text>Moda: {mode}</Text>
+              </>
+            ) : (
+              <>
+                <Text>Média: - </Text>
+                <Text>Mediana: -</Text>
+                <Text>Moda: -</Text>
+              </>
+            )}
+          </RightCards>
+
           <TheTableContainer>
             <LeftTable>
-              {left && 
-              left.map((user, index) => (
-                canShow ? (
-                <CardUser name={user.name} num={user.vote} key={index}/>
-                ) :( 
-                <CardUser name={user.name} num={cardSuits[index % 4] }key={index}/>
-                )
-              )) }
+              {left &&
+                left.map((user, index) =>
+                  canShow ? (
+                    <CardUser name={user.name} num={user.vote} key={index} />
+                  ) : (
+                    <CardUser
+                      name={user.name}
+                      num={cardSuits[index % 4]}
+                      key={index}
+                    />
+                  )
+                )}
             </LeftTable>
-           
+
             <TopTable>
-            {top && top.map((user, index) => (
-              canShow ? (
-              <CardUser name={user.name} num={user.vote} key={index}/>
-              )
-              :(
-                <CardUser name={user.name} num={cardSuits[index % 4]} key={index}/>
-              )
-              ))}
+              {top &&
+                top.map((user, index) =>
+                  canShow ? (
+                    <CardUser name={user.name} num={user.vote} key={index} />
+                  ) : (
+                    <CardUser
+                      name={user.name}
+                      num={cardSuits[index % 4]}
+                      key={index}
+                    />
+                  )
+                )}
             </TopTable>
-            <Table />
+            <Table name={task} />
             <RightTable>
-            {right && right.map((user, index) => (
-              canShow ? (
-              <CardUser name={user.name} num={user.vote} key={index}/>
-              ):(
-                <CardUser name={user.name} num={cardSuits[index% 4]} key={index}/>
-              )
-              ))}
+              {right &&
+                right.map((user, index) =>
+                  canShow ? (
+                    <CardUser name={user.name} num={user.vote} key={index} />
+                  ) : (
+                    <CardUser
+                      name={user.name}
+                      num={cardSuits[index % 4]}
+                      key={index}
+                    />
+                  )
+                )}
             </RightTable>
             <BottomTable>
-            {bottom && bottom.map((user, index) => (
-              canShow ? (
-              <CardUser name={user.name} num={user.vote} key={index}/>
-              ):(
-              <CardUser name={user.name} num={cardSuits[index% 4]} key={index}/>
-              )
-              ))}
+              {bottom &&
+                bottom.map((user, index) =>
+                  canShow ? (
+                    <CardUser name={user.name} num={user.vote} key={index} />
+                  ) : (
+                    <CardUser
+                      name={user.name}
+                      num={cardSuits[index % 4]}
+                      key={index}
+                    />
+                  )
+                )}
             </BottomTable>
           </TheTableContainer>
+        </>
+      )}
 
-            </> ) }
-      
       <ContainerCards>
-      
-      {fibonacci.map((value, index) =>
-      (
-        <Card number={value} key={index} id="number-card" onClickFunction={() => {doVote(value)}}/>
-      ))} 
-      
-      <ManageButton text={canShowText} onClickFunction={() => {
-        showVotes({code: code, state: !canShow});
-        setCanShow((prevState) => !prevState);
-        setCanShowText(() => canShow ? "Show" : "Hide");
-      } }/>
+        {fibonacci.map((value, index) => (
+          <Card
+            number={value === 0 ? "💡" : value}
+            key={index}
+            id="number-card"
+            onClickFunction={() => {
+              doVote(value);
+            }}
+          />
+        ))}
+        {isCreator && (
+          <ManageButton
+            text={canShowText}
+            onClickFunction={() => {
+              showVotes({ code: code, state: !canShow });
+              setCanShow((prevState) => !prevState);
+              setCanShowText(() => (canShow ? "Show" : "Hide"));
+            }}
+          />
+        )}
       </ContainerCards>
     </>
   );
 }
-
-

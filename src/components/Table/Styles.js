@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const TableContainer = styled.div`
-position: relativ;
- background-color: #2A2A2A;
+  position: relativ;
+  background-color: #2a2a2a;
   border: solid 1px gold;
   border-radius: 10px;
   width: 810px;
@@ -24,15 +24,8 @@ position: relativ;
   }
 `;
 
-export const CenterLogo = styled.img`
-  width: 7%;
-  height: auto;
-  
-  @media (max-width: 768px) {
-    width: 10%;
-  }
-
-  @media (max-width: 480px) {
-    width: 15%;
-  }
+export const CenterLogo = styled.h1`
+  font-size: 2.5em;
+  color: gold;
+  font-family: "Audiowide", sans-serif;
 `;
