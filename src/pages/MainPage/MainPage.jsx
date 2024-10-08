@@ -17,11 +17,16 @@ import {
   ButtonTask,
 } from "./Styles";
 import { useParams } from "react-router-dom";
-import { useGetRoom, useShowVotes } from "../../hooks/querys/room";
+import {
+  useGetRoom,
+  useShowVotes,
+  useUpdateTaskName,
+} from "../../hooks/querys/room";
 import { useVote } from "../../hooks/querys/user";
 import ErrorBox from "../../components/ErrorBox/ErrorBox";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function MainPage() {
   const [errorText, setErrorText] = useState(null);
@@ -34,7 +39,8 @@ export default function MainPage() {
   const [top, setTop] = useState([]);
   const [task, setTask] = useState("");
   const [bottom, setBottom] = useState([]);
-
+  const queryClient = useQueryClient();
+  const [hasVoted, setHasVoted] = useState(false);
   const cardSuits = ["\u{2660}", "\u{2665}", "\u{2666}", "\u{2663}"];
 
   const [canShow, setCanShow] = useState(false);
@@ -54,12 +60,19 @@ export default function MainPage() {
     refetchInterval: 0,
     staleTime: 0,
   });
+  const { mutate: updateTask } = useUpdateTaskName({
+    onSuccess: () => {
+      queryClient.invalidateQueries(["room"]);
+    },
+  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateTask({ currentTask: task });
+    setTask("");
+  };
   const isCreator = getRoom?.users.some(
     (user) => user._id === userID && user.type === true
   );
-  const handleInputChange = (e) => {
-    setTask(e.target.value);
-  };
 
   const { mutate: vote } = useVote({
     onError: (err) => {
@@ -154,6 +167,9 @@ export default function MainPage() {
 
   function doVote(num) {
     vote({ id: userID, body: { vote: num } });
+    if (num >= 0) {
+      setHasVoted(true);
+    }
   }
 
   useEffect(() => {
@@ -173,6 +189,7 @@ export default function MainPage() {
   useEffect(() => {
     if (!canShow) {
       doVote(-1);
+      setHasVoted(false);
       const numberCards = document.querySelectorAll(".number-card");
       numberCards.forEach((card) => {
         card.style.backgroundColor = "#222222";
@@ -221,12 +238,15 @@ export default function MainPage() {
             </Link>
             {isCreator && (
               <>
-                <NameLabel>Nome da tarefa:</NameLabel>
-                <TaskInput
-                  type="text"
-                  value={task}
-                  onChange={handleInputChange}
-                />
+                <form onSubmit={handleSubmit}>
+                  <NameLabel>Nome da tarefa:</NameLabel>
+                  <TaskInput
+                    type="text"
+                    value={task}
+                    onChange={(e) => setTask(e.target.value)}
+                    placeholder="Update Current Task"
+                  />
+                </form>
               </>
             )}
           </LeftCards>
@@ -257,6 +277,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
+                      hasVoted={hasVoted}
                     />
                   )
                 )}
@@ -272,6 +293,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
+                      hasVoted={hasVoted}
                     />
                   )
                 )}
@@ -287,6 +309,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
+                      hasVoted={hasVoted}
                     />
                   )
                 )}
@@ -301,6 +324,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
+                      hasVoted={hasVoted}
                     />
                   )
                 )}

@@ -4,21 +4,21 @@ import {
   deleteRoom,
   addUser,
   createRoom,
-  showVotes
+  showVotes,
+  updateTaskName,
 } from "../../services/endpoints";
 
 export function useGetRoom({
   onSuccess = () => {},
   onError = (err) => console.error(err),
   code,
-} = {})  {
+} = {}) {
   return useQuery({
-    queryKey: ["room", code ],
+    queryKey: ["room", code],
     queryFn: () => getRoom(code),
     onSuccess,
     onError,
     refetchInterval: 300,
-    
   });
 }
 
@@ -55,10 +55,20 @@ export function useShowVotes({
 }
 
 export function useCreateRoom({ onSuccess = () => {} } = {}) {
-    const onError = () => {};
-    return useMutation({
-      mutationFn: createRoom,
-      onError,
-      onSuccess,
-    });
-  }
+  const onError = () => {};
+  return useMutation({
+    mutationFn: createRoom,
+    onError,
+    onSuccess,
+  });
+}
+export function useUpdateTaskName({
+  onSuccess = () => {},
+  onError = (err) => console.error(err),
+} = {}) {
+  return useMutation({
+    mutationFn: updateTaskName,
+    onSuccess,
+    onError,
+  });
+}
