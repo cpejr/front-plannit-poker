@@ -1,10 +1,10 @@
 import { CenterLogo } from "./Styles";
 import { TableContainer } from "./Styles";
 
-export default function Table({ name }) {
+export default function Table({ currentTask }) {
   return (
     <TableContainer>
-      <CenterLogo>{name}</CenterLogo>
+      <CenterLogo>{currentTask}</CenterLogo>
     </TableContainer>
   );
 }

@@ -22,10 +22,10 @@ export default function CreateRoomModel({ modalDisplay, closeModal }) {
   });
 
   function doCreateRoom() {
-    const roomName = document.getElementById("room-name").value;
+    const roomName = document.getElementById("room-name").value.trim(); // Usando trim para remover espaços
     const max = parseInt(document.getElementById("max-users").value, 10);
-    console.log(max);
-    if (!roomName || roomName === "") {
+
+    if (!roomName) {
       setErrorText("Nome da sala não pode estar vazio");
     } else {
       createRoom({
@@ -42,21 +42,26 @@ export default function CreateRoomModel({ modalDisplay, closeModal }) {
       <ErrorBox
         text={errorText}
         modalDisplay={errorText ? "flex" : "none"}
-        closeModal={() => {
-          setErrorText(null);
-        }}
+        closeModal={() => setErrorText(null)}
       />
       <CloseX onClick={closeModal}>X</CloseX>
       <Instruction>Nome da Sala</Instruction>
       <LoginTextSpace id="room-name" placeHolder={"ROOM NAME"} />
       <Instruction>Limite de membros</Instruction>
-      <NumberInput id="max-users" type="number" defaultValue="10" min="1" max="18" />
+      <NumberInput
+        id="max-users"
+        type="number"
+        defaultValue="10"
+        min="1"
+        max="18"
+      />
       <LoginButton text={"CRIAR"} onClickFunction={doCreateRoom} />
     </ModelContainer>
   );
 }
 
 CreateRoomModel.propTypes = {
-  modalDisplay: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  modalDisplay: PropTypes.oneOfType([PropTypes.string, PropTypes.object])
+    .isRequired,
   closeModal: PropTypes.func.isRequired,
 };

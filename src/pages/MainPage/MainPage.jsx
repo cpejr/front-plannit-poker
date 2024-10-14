@@ -97,7 +97,7 @@ export default function MainPage() {
       let count = 0;
 
       getRoom.users.forEach((user) => {
-        if (user.vote !== undefined && user.vote !== null && user.vote >= 0) {
+        if (user.vote !== undefined && user.vote !== null && user.vote > 0) {
           totalVotes += user.vote;
           count += 1;
         }
@@ -201,7 +201,7 @@ export default function MainPage() {
   useEffect(() => {
     generateFibonacci();
   }, []);
-
+  console.log("Current Task:", task);
   return (
     <>
       <ErrorBox
@@ -298,7 +298,7 @@ export default function MainPage() {
                   )
                 )}
             </TopTable>
-            <Table name={task} />
+            <Table currentTask={task} />
             <RightTable>
               {right &&
                 right.map((user, index) =>

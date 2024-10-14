@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { colors } from "../../styles/stylesVariables";
 
 export const ContainerCards = styled.div`
   display: flex;
@@ -24,7 +25,7 @@ export const LeftCards = styled.div`
   left: 0;
   width: 15%;
   margin-top: 50px;
-  color: gold;
+  color: ${colors.font.default};
   margin: 15px;
   font-family: "Orbitron", sans-serif;
   font-size: 1.2em;
@@ -40,7 +41,6 @@ export const LeftCards = styled.div`
 export const RightCards = styled.div`
   display: flex;
   text-align: center;
-  self-align: right;
   justify-content: center;
   float: right;
   right: 0;
@@ -48,7 +48,7 @@ export const RightCards = styled.div`
   width: 10%;
   margin-top: 50px;
   background-color: 262626;
-  color: gold;
+  color: ${colors.font.default};
   margin: 15px;
   font-family: "Orbitron", sans-serif;
   font-size: 1.4em;
@@ -62,7 +62,7 @@ export const RightCards = styled.div`
 `;
 export const ButtonTask = styled.button`
   margin-top: 10px;
-  background-color: gold;
+  background-color: ${colors.font.default};
   border-radius: 10px;
   cursor: pointer;
 `;
@@ -74,7 +74,7 @@ export const TaskInput = styled.input`
   font-size: 1.3rem;
   background-color: inherit;
   outline: none;
-  color: gold;
+  color: ${colors.font.default};
 `;
 export const Link = styled.a`
   margin-bottom: 12px;
@@ -104,7 +104,7 @@ export const Text = styled.p`
 `;
 
 export const NameLabel = styled.h1`
-  color: gold;
+  color: ${colors.font.default};
   font-family: "Audiowide", sans-serif;
   text-align: center;
   font-size: 1.5em;

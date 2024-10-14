@@ -28,7 +28,7 @@ export async function vote({ id, body }) {
 
 //ROOM
 export async function updateTaskName() {
-  const { data } = await api.get("/room");
+  const { data } = await api.put("/room}");
   return data;
 }
 export async function getRooms() {
