@@ -27,10 +27,11 @@ export async function vote({ id, body }) {
 }
 
 //ROOM
-export async function updateTaskName() {
-  const { data } = await api.put("/room}");
+export async function updateTaskName({ currentTask, code }) {
+  const { data } = await api.put(`/room/${code}`, { currentTask });
   return data;
 }
+
 export async function getRooms() {
   const { data } = await api.get("/room");
   return data;

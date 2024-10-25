@@ -42,7 +42,6 @@ export function useAddUser({
     onError,
   });
 }
-
 export function useShowVotes({
   onSuccess = () => {},
   onError = (err) => console.error(err),

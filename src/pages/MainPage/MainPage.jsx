@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Table, Card, CardUser, ManageButton } from "../../components";
 import {
   ContainerCards,
@@ -42,7 +43,7 @@ export default function MainPage() {
   const queryClient = useQueryClient();
   const [hasVoted, setHasVoted] = useState(false);
   const cardSuits = ["\u{2660}", "\u{2665}", "\u{2666}", "\u{2663}"];
-
+  const { register, handleSubmit, reset } = useForm();
   const [canShow, setCanShow] = useState(false);
   const [canShowText, setCanShowText] = useState("Show");
 
@@ -65,10 +66,10 @@ export default function MainPage() {
       queryClient.invalidateQueries(["room"]);
     },
   });
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateTask({ currentTask: task });
-    setTask("");
+  const onSubmit = (data) => {
+    const code = getRoom.code;
+    updateTask({ currentTask: data.taskName, code });
+    reset();
   };
   const isCreator = getRoom?.users.some(
     (user) => user._id === userID && user.type === true
@@ -201,7 +202,6 @@ export default function MainPage() {
   useEffect(() => {
     generateFibonacci();
   }, []);
-  console.log("Current Task:", task);
   return (
     <>
       <ErrorBox
@@ -238,14 +238,14 @@ export default function MainPage() {
             </Link>
             {isCreator && (
               <>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <NameLabel>Nome da tarefa:</NameLabel>
                   <TaskInput
                     type="text"
-                    value={task}
-                    onChange={(e) => setTask(e.target.value)}
+                    {...register("taskName", { required: true })}
                     placeholder="Update Current Task"
                   />
+                  <ButtonTask type="submit">Atualizar Tarefa</ButtonTask>
                 </form>
               </>
             )}
@@ -298,7 +298,7 @@ export default function MainPage() {
                   )
                 )}
             </TopTable>
-            <Table currentTask={task} />
+            <Table currentTask={getRoom?.currentTask} />
             <RightTable>
               {right &&
                 right.map((user, index) =>
