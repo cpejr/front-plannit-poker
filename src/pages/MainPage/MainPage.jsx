@@ -23,6 +23,7 @@ import {
   useShowVotes,
   useUpdateTaskName,
 } from "../../hooks/querys/room";
+import { useGetUsers } from "../../hooks/querys/user";
 import { useVote } from "../../hooks/querys/user";
 import ErrorBox from "../../components/ErrorBox/ErrorBox";
 import { useNavigate } from "react-router-dom";
@@ -41,7 +42,6 @@ export default function MainPage() {
   const [task, setTask] = useState("");
   const [bottom, setBottom] = useState([]);
   const queryClient = useQueryClient();
-  const [hasVoted, setHasVoted] = useState(false);
   const cardSuits = ["\u{2660}", "\u{2665}", "\u{2666}", "\u{2663}"];
   const { register, handleSubmit, reset } = useForm();
   const [canShow, setCanShow] = useState(false);
@@ -61,6 +61,7 @@ export default function MainPage() {
     refetchInterval: 0,
     staleTime: 0,
   });
+
   const { mutate: updateTask } = useUpdateTaskName({
     onSuccess: () => {
       queryClient.invalidateQueries(["room"]);
@@ -167,10 +168,17 @@ export default function MainPage() {
   }
 
   function doVote(num) {
-    vote({ id: userID, body: { vote: num } });
-    if (num >= 0) {
-      setHasVoted(true);
-    }
+    const hasUserVoted = num > 0;
+
+    vote(
+      { id: userID, body: { vote: num, hasVoted: hasUserVoted } },
+      {
+        onSuccess: () => {
+          setHasVoted(hasUserVoted);
+          refetch();
+        },
+      }
+    );
   }
 
   useEffect(() => {
@@ -190,7 +198,6 @@ export default function MainPage() {
   useEffect(() => {
     if (!canShow) {
       doVote(-1);
-      setHasVoted(false);
       const numberCards = document.querySelectorAll(".number-card");
       numberCards.forEach((card) => {
         card.style.backgroundColor = "#222222";
@@ -277,7 +284,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
+                      hasVoted={user.hasVoted}
                     />
                   )
                 )}
