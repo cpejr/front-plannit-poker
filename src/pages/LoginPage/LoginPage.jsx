@@ -1,55 +1,73 @@
 import { useState } from "react";
-import { EnterRoomModal, LoginButton, LoginTextSpace, CreateRoomModal, ErrorBox} from "../../components";
+import {
+  EnterRoomModal,
+  LoginButton,
+  LoginTextSpace,
+  CreateRoomModal,
+  ErrorBox,
+} from "../../components";
 import { LoginContainer, Instruction } from "./Styles";
 import { useCreateUser } from "../../hooks/querys/user";
-
 
 export default function LoginPage() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [isEnterModalVisible, setIsEnterModalVisible] = useState(false);
   const [errorText, setErrorText] = useState(null);
-  
 
   const { mutate: createUser } = useCreateUser({
-    onSuccess: () => {
-    },
+    onSuccess: () => {},
     onError: (err) => setErrorText(err),
   });
 
   function toggleEnterModal() {
-    const userName = document.getElementById("user-name").value;
-    if(!document.getElementById("user-name").value){
+    const userName = document.getElementById("user-name").value.trim(); // Usando trim para remover espaços
+    if (!userName) {
       setErrorText("Nome é campo obrigatório");
-    }else{
+    } else {
       createUser({
-        "name":userName
+        name: userName,
       });
-      setIsEnterModalVisible(prevState => !prevState);
+      setIsEnterModalVisible((prevState) => !prevState);
     }
   }
+
   function toggleCreateModal() {
-    const userName = document.getElementById("user-name").value;
-    if(!userName){
+    const userName = document.getElementById("user-name").value.trim(); // Usando trim para remover espaços
+    if (!userName) {
       setErrorText("Nome é campo obrigatório");
-    }else{
+    } else {
       createUser({
-        "name":userName,
-        "type": true,
+        name: userName,
+        type: true,
       });
-      setIsCreateModalVisible(prevState => !prevState);
-    }  }
+      setIsCreateModalVisible((prevState) => !prevState);
+    }
+  }
+
   return (
     <LoginContainer>
-      <ErrorBox text={ errorText } modalDisplay={ errorText ? "flex" : "none" } closeModal={() => { setErrorText(null) }}></ErrorBox>
-      <CreateRoomModal id="enter-room" modalDisplay={isCreateModalVisible ? "flex" : "none" } closeModal={() => { setIsCreateModalVisible(false) }}/>
-      <EnterRoomModal id="enter-room" modalDisplay={isEnterModalVisible ? "flex" : "none" } closeModal={() => { setIsEnterModalVisible(false) }}/>
+      <ErrorBox
+        text={errorText}
+        modalDisplay={errorText ? "flex" : "none"}
+        closeModal={() => setErrorText(null)}
+      />
+      <CreateRoomModal
+        id="enter-room"
+        modalDisplay={isCreateModalVisible ? "flex" : "none"}
+        closeModal={() => setIsCreateModalVisible(false)}
+      />
+      <EnterRoomModal
+        id="enter-room"
+        modalDisplay={isEnterModalVisible ? "flex" : "none"}
+        closeModal={() => setIsEnterModalVisible(false)}
+      />
       <Instruction>Nome *</Instruction>
       <LoginTextSpace id={"user-name"} placeHolder={"Ex: Thales"} />
       <LoginButton text="Criar nova sala" onClickFunction={toggleCreateModal} />
-      <LoginButton text="Entrar em sala existente" onClickFunction={toggleEnterModal} />
+      <LoginButton
+        text="Entrar em sala existente"
+        onClickFunction={toggleEnterModal}
+      />
     </LoginContainer>
   );
 }
-
-
-

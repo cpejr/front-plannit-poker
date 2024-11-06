@@ -12,14 +12,12 @@ export async function deleteUser(_id) {
   return data;
 }
 export async function createUser(body) {
-    
-    const { setAuth } = useAuthStore.getState();
-  
-    const { data } = await api.post("/user", body);
-    setAuth(data.accessToken);
-    
+  const { setAuth } = useAuthStore.getState();
 
-    return data;
+  const { data } = await api.post("/user", body);
+  setAuth(data.accessToken);
+
+  return data;
 }
 
 export async function vote({ id, body }) {
@@ -29,35 +27,39 @@ export async function vote({ id, body }) {
 }
 
 //ROOM
+export async function updateTaskName({ currentTask, code }) {
+  const { data } = await api.put(`/room/${code}`, { currentTask });
+  return data;
+}
 
-  export async function getRooms() {
-    const { data } = await api.get("/room");
-    return data;
-  }
-  export async function getRoom(code) {
-    const { data } = await api.get(`/room/${code}`);
-    return data;
-  }
-  
-  export async function deleteRoom(_id) {
-    const { data } = await api.delete(`/room/${_id}`);
-  
-    return data;
-  }
-  export async function createRoom(body) {
-    const { data } = await api.post("/room", body);
-  
-    return data;
-  }
-  
-  export async function addUser({ code, idUser }) {
-    const { data } = await api.put(`/room/addUser/${code}`, {"users":[idUser]});
-  
-    return data;
-  }
+export async function getRooms() {
+  const { data } = await api.get("/room");
+  return data;
+}
+export async function getRoom(code) {
+  const { data } = await api.get(`/room/${code}`);
+  return data;
+}
 
-  export async function showVotes({ code, state }) {
-    const { data } = await api.put(`/room/${code}`, {"show": state });
-  
-    return data;
-  }
+export async function deleteRoom(_id) {
+  const { data } = await api.delete(`/room/${_id}`);
+
+  return data;
+}
+export async function createRoom(body) {
+  const { data } = await api.post("/room", body);
+
+  return data;
+}
+
+export async function addUser({ code, idUser }) {
+  const { data } = await api.put(`/room/addUser/${code}`, { users: [idUser] });
+
+  return data;
+}
+
+export async function showVotes({ code, state }) {
+  const { data } = await api.put(`/room/${code}`, { show: state });
+
+  return data;
+}
