@@ -300,7 +300,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
+                      hasVoted={user.hasVoted}
                     />
                   )
                 )}
@@ -316,7 +316,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
+                      hasVoted={user.hasVoted}
                     />
                   )
                 )}
@@ -331,7 +331,7 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
+                      hasVoted={user.hasVoted}
                     />
                   )
                 )}
