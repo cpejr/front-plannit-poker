@@ -1,14 +1,10 @@
 import { CenterLogo } from "./Styles";
 import { TableContainer } from "./Styles";
-import cpeLogo from "../../assets/cpeLogo.png";
 
-export default function Table() {
-  
-
+export default function Table({ currentTask }) {
   return (
     <TableContainer>
-        <CenterLogo src={cpeLogo}></CenterLogo>
-
+      <CenterLogo>{currentTask}</CenterLogo>
     </TableContainer>
   );
 }

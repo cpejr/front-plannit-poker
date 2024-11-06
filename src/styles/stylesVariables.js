@@ -8,6 +8,7 @@ export const colors = {
   font: {
     primary: "#33603F",
     secondary: "#000",
+    default: "#FFD700",
     title: "#33603F",
     line: "#33603F",
   },
