@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Table, Card, CardUser, ManageButton } from "../../components";
+import { Table, Card, CardUser, ManageButton, RemoveModal } from "../../components";
 import {
   ContainerCards,
   LeftCards,
@@ -23,7 +23,7 @@ import {
   useShowVotes,
   useUpdateTaskName,
 } from "../../hooks/querys/room";
-import { useGetUsers } from "../../hooks/querys/user";
+import { useDeleteUsers } from "../../hooks/querys/user";
 import { useVote } from "../../hooks/querys/user";
 import ErrorBox from "../../components/ErrorBox/ErrorBox";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +32,8 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export default function MainPage() {
   const [errorText, setErrorText] = useState(null);
+  const [userRemoval, setUserRemoval] = useState(null);
+  const [userRemovalId, setUserRemovalId] = useState(null);
   const [fibonacci, setFibonacci] = useState([0, 1, 2, 3, 4, 5]);
   const userID = useAuthStore((state) => state?.auth?.user?._id);
   const { code } = useParams();
@@ -67,6 +69,12 @@ export default function MainPage() {
       queryClient.invalidateQueries(["room"]);
     },
   });
+  const { mutate: deleteUser } = useDeleteUsers({
+    onSuccess: () => {
+      queryClient.invalidateQueries(["room"]);
+    },
+  });
+
   const onSubmit = (data) => {
     const code = getRoom.code;
     updateTask({ currentTask: data.taskName, code });
@@ -219,6 +227,20 @@ export default function MainPage() {
           navigate("/");
         }}
       ></ErrorBox>
+      {isCreator && (
+      <RemoveModal
+        user={userRemoval}
+        modalDisplay={userRemoval ? "flex" : "none"}
+        closeModal={() => {
+          setUserRemoval(null);
+          setUserRemovalId(null);
+
+        }}
+        removeFunction={() => {deleteUser(userRemovalId)}}
+      >
+      </RemoveModal>
+
+      )}
 
       {isRoomLoading ? (
         <p>Room Loading</p>
@@ -285,6 +307,12 @@ export default function MainPage() {
                       num={cardSuits[index % 4]}
                       key={index}
                       hasVoted={user.hasVoted}
+                      onClickedFunction={() => 
+                        {
+                          setUserRemoval(user.name);
+                          setUserRemovalId(user._id);
+                        }
+                      }
                     />
                   )
                 )}
@@ -301,6 +329,12 @@ export default function MainPage() {
                       num={cardSuits[index % 4]}
                       key={index}
                       hasVoted={hasVoted}
+                      onClickedFunction={() => 
+                        {
+                          setUserRemoval(user.name);
+                          setUserRemovalId(user._id);
+                        }
+                      }
                     />
                   )
                 )}
@@ -317,6 +351,12 @@ export default function MainPage() {
                       num={cardSuits[index % 4]}
                       key={index}
                       hasVoted={hasVoted}
+                      onClickedFunction={() => 
+                        {
+                          setUserRemoval(user.name);
+                          setUserRemovalId(user._id);
+                        }
+                      }
                     />
                   )
                 )}
@@ -332,6 +372,12 @@ export default function MainPage() {
                       num={cardSuits[index % 4]}
                       key={index}
                       hasVoted={hasVoted}
+                      onClickedFunction={() => 
+                        {
+                          setUserRemoval(user.name);
+                          setUserRemovalId(user._id);
+                        }
+                      }
                     />
                   )
                 )}
