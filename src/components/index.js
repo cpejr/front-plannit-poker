@@ -10,3 +10,4 @@ export { default as EnterRoomModal} from "./EnterRoomModal/EnterRoomModal.jsx";
 export { default as CreateRoomModal} from "./CreateRoomModal/CreateRoomModal.jsx";
 export { default as ErrorBox} from "./ErrorBox/ErrorBox.jsx";
 export { default as ManageButton } from "./ManageButton/ManageButton.jsx";
+export { default as RemoveModal } from "./RemoveModal/RemoveModal.jsx";

@@ -1,15 +1,15 @@
 import PropTypes from "prop-types";
 import { CardContainer, UserCard, UserNameP } from "./Styles";
 
-export default function Card({ name, num, hasVoted }) {
+export default function Card({ name, num, hasVoted, onClickedFunction}) {
   return (
     <CardContainer>
       <UserNameP>{name}</UserNameP>
       <UserCard style={{ backgroundColor: hasVoted ? "green" : "red" }}>
         {num < 0 ? (
-          <span>♠</span> // Ícone de espadas continua caso não tenha votado
+          <span onClick={onClickedFunction}>♠</span> // Ícone de espadas continua caso não tenha votado
         ) : (
-          num // Exibe apenas o número
+          <span onClick={onClickedFunction}>{num}</span>  // Exibe apenas o número
         )}
       </UserCard>
     </CardContainer>
