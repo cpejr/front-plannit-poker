@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Table, Card, CardUser, ManageButton, RemoveModal } from "../../components";
+import {
+  Table,
+  Card,
+  CardUser,
+  ManageButton,
+  RemoveModal,
+} from "../../components";
 import {
   ContainerCards,
   LeftCards,
@@ -228,18 +234,17 @@ export default function MainPage() {
         }}
       ></ErrorBox>
       {isCreator && (
-      <RemoveModal
-        user={userRemoval}
-        modalDisplay={userRemoval ? "flex" : "none"}
-        closeModal={() => {
-          setUserRemoval(null);
-          setUserRemovalId(null);
-
-        }}
-        removeFunction={() => {deleteUser(userRemovalId)}}
-      >
-      </RemoveModal>
-
+        <RemoveModal
+          user={userRemoval}
+          modalDisplay={userRemoval ? "flex" : "none"}
+          closeModal={() => {
+            setUserRemoval(null);
+            setUserRemovalId(null);
+          }}
+          removeFunction={() => {
+            deleteUser(userRemovalId);
+          }}
+        ></RemoveModal>
       )}
 
       {isRoomLoading ? (
@@ -307,12 +312,10 @@ export default function MainPage() {
                       num={cardSuits[index % 4]}
                       key={index}
                       hasVoted={user.hasVoted}
-                      onClickedFunction={() => 
-                        {
-                          setUserRemoval(user.name);
-                          setUserRemovalId(user._id);
-                        }
-                      }
+                      onClickedFunction={() => {
+                        setUserRemoval(user.name);
+                        setUserRemovalId(user._id);
+                      }}
                     />
                   )
                 )}
@@ -328,13 +331,11 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
-                      onClickedFunction={() => 
-                        {
-                          setUserRemoval(user.name);
-                          setUserRemovalId(user._id);
-                        }
-                      }
+                      hasVoted={user.hasVoted}
+                      onClickedFunction={() => {
+                        setUserRemoval(user.name);
+                        setUserRemovalId(user._id);
+                      }}
                     />
                   )
                 )}
@@ -350,13 +351,11 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
-                      onClickedFunction={() => 
-                        {
-                          setUserRemoval(user.name);
-                          setUserRemovalId(user._id);
-                        }
-                      }
+                      hasVoted={user.hasVoted}
+                      onClickedFunction={() => {
+                        setUserRemoval(user.name);
+                        setUserRemovalId(user._id);
+                      }}
                     />
                   )
                 )}
@@ -371,13 +370,11 @@ export default function MainPage() {
                       name={user.name}
                       num={cardSuits[index % 4]}
                       key={index}
-                      hasVoted={hasVoted}
-                      onClickedFunction={() => 
-                        {
-                          setUserRemoval(user.name);
-                          setUserRemovalId(user._id);
-                        }
-                      }
+                      hasVoted={user.hasVoted}
+                      onClickedFunction={() => {
+                        setUserRemoval(user.name);
+                        setUserRemovalId(user._id);
+                      }}
                     />
                   )
                 )}
